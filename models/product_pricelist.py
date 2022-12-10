@@ -16,7 +16,7 @@ class Pricelist(models.Model):
         if self.date_start:
             item_ids = self.item_ids
             for item in item_ids:
-                item.date_start = self.date_start
+                item.update({'date_start':self.date_start})
             self.item_ids = item_ids
 
     @api.onchange('date_end')
@@ -24,5 +24,14 @@ class Pricelist(models.Model):
         if self.date_end:
             item_ids = self.item_ids
             for item in item_ids:
-                item.date_end = self.date_end
+                item.update({'date_end': self.date_end})
             self.item_ids = item_ids
+
+    @api.model_create_multi
+    def create(self, vals):
+        pricelists = super(Pricelist, self).create(vals)
+        for pricelist in pricelists:
+            pricelist.item_ids.write({'date_start':pricelist.date_start,'date_end':pricelist.date_end})
+        return pricelists
+
+
