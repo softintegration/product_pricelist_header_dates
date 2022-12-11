@@ -35,3 +35,14 @@ class Pricelist(models.Model):
         return pricelists
 
 
+class PricelistItem(models.Model):
+    _inherit = "product.pricelist.item"
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        self.date_start = self.pricelist_id.date_start
+        self.date_end = self.pricelist_id.date_end
+
+
+
+
